@@ -97,7 +97,7 @@ def remove_redis_keys(name):
 
 def check_shutdown():
     """
-    Check for shutdown for a gracefull exit.
+    Check for shutdown for a graceful exit.
     """
     key = get_key('shutdown')
     rdb = redis_connection()
