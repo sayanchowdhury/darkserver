@@ -21,7 +21,8 @@ setup(name='darkserver',
                           'darkjobworker', 'darkproducer', 'darkdashboard']),
           ('/etc/darkserver/', ['darkserverweb/settings.py', 'configs/darkserverweb.conf',\
                                 'configs/dark-distros.json', 'configs/darkjobworker.conf',\
-                                'configs/redis_server.json', 'configs/email.json']),
+                                'configs/redis_server.json', 'configs/email.json',\
+                                'configs/darkserverurl.conf']),
           ('/usr/share/darkserver/static', ['static/index.html', 'static/404.html', \
                                             'static/500.html']), ]
 

@@ -134,7 +134,7 @@ def get_distro(idx):
         path = '/etc/darkserver/dark-distros.json'
 
     distro = json.load(open(path))
-    kojiurl = "http://koji.fedoraproject.org/kojihub"
+    kojiurl = get_url_config()
     kc = koji.ClientSession(kojiurl, {'debug': False, 'password': None,\
                         'debug_xmlrpc': False, 'user': None})
     res = kc.getBuild(idx)
@@ -195,6 +195,19 @@ def system(cmd):
     out, err = ret.communicate()
     return out
 
+def get_url_config():
+    """
+    Get the URL configuration as a dict
+    """
+    path = '/etc/darkserver/darkserverurl.conf'
+    try:
+        config = ConfigParser.ConfigParser()
+        config.read(path)
+
+        url = config.get('darkserver','url')
+    except Exception, e:
+        log('get_url_config', str(e), 'error')
+    return url
 
 def getconfig():
     """
@@ -325,14 +338,14 @@ def do_buildid_import(mainurl, idx, key):
 def produce_jobs(idx):
     key = get_key('darkproducer')
     log(key, "starting with %s" % str(idx), 'info')
-    kojiurl = 'http://koji.fedoraproject.org/'
-    kojiurl2 = kojiurl + 'kojihub'
-    kc = koji.ClientSession(kojiurl2, {'debug': False, 'password': None,\
+    kojiurl = get_url_config()
+    kojiurl_base_url = kojiurl.rsplit('/', 1)[0]
+    kc = koji.ClientSession(kojiurl, {'debug': False, 'password': None,\
                         'debug_xmlrpc': False, 'user': None})
 
     config = get_redis_config()
     jobqueue = Queue('jobqueue', config)
-    jobqueue.connect()
+    jobqueue.connect(_base_url)
     buildqueue = Queue('buildqueue', config)
     buildqueue.connect()
     #lastbuild = {'id':None, 'time':None}
@@ -349,7 +362,7 @@ def produce_jobs(idx):
             idx = int(rdb.get('darkproducer-id'))
             utils.msgtext = "ID: %s" % idx
             res = kc.getBuild(idx)
-            url = kojiurl + 'koji/buildinfo?buildID=%s' % idx
+            url = kojiurl_base_url + '/koji/buildinfo?buildID=%s' % idx
             if not res:
                 #FIXME!!
                 #http://koji.fedoraproject.org/koji/buildinfo?buildID=367374
@@ -379,7 +392,7 @@ def produce_jobs(idx):
 
             if res['state'] == 0:
                 #building state
-                info = {'url': url, 'jobid': idx, 'kojiurl': kojiurl2}
+                info = {'url': url, 'jobid': idx, 'kojiurl': kojiurl}
                 task = Task(info)
                 buildqueue.enqueue(task)
                 log(key, "In build queue %s" % idx, 'info')
