@@ -40,9 +40,10 @@ class DarkDaemon(Daemon):
                     continue
                 url = task.data['url']
                 idx = task.data['jobid']
+                path = task.data['config_path']
                 utils.msgtext = task.data['url']
                 log(key, "Import started %s" % idx, 'info')
-                do_buildid_import(url, idx, key)
+                do_buildid_import(url, idx, key, path)
                 log(key, "Import finished %s" % idx, 'info')
             except Exception, err:
                 log(key, str(err), 'error')

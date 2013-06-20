@@ -195,11 +195,11 @@ def system(cmd):
     out, err = ret.communicate()
     return out
 
-def get_url_config():
+def get_url_config(path):
     """
     Get the URL configuration as a dict
     """
-    path = '/etc/darkserver/darkserverurl.conf'
+    url = 'http://koji.fedoraproject.org/kojihub/'
     try:
         config = ConfigParser.ConfigParser()
         config.read(path)
@@ -296,14 +296,14 @@ def save_result(results, key):
         log(key, str(error), 'error')
 
 
-def do_buildid_import(mainurl, idx, key):
+def do_buildid_import(mainurl, idx, key, path):
     """
     Import the buildids from the given Koji URL
     """
     if not mainurl:
         return
     #Guess the distro name
-    distro = get_distro(idx)
+    distro = get_distro(idx, path)
     if not distro:  # We don't want to import this build
         return
     req = requests.get(mainurl)
@@ -335,17 +335,17 @@ def do_buildid_import(mainurl, idx, key):
             log_status('darkjobworker', 'Import done for %s' % rpm)
 
 
-def produce_jobs(idx):
+def produce_jobs(idx, path='/etc/darkserver/darkserverurl.conf'):
     key = get_key('darkproducer')
     log(key, "starting with %s" % str(idx), 'info')
-    kojiurl = get_url_config()
+    kojiurl = get_url_config(path)
     kojiurl_base_url = kojiurl.rsplit('/', 1)[0]
     kc = koji.ClientSession(kojiurl, {'debug': False, 'password': None,\
                         'debug_xmlrpc': False, 'user': None})
 
     config = get_redis_config()
     jobqueue = Queue('jobqueue', config)
-    jobqueue.connect(_base_url)
+    jobqueue.connect()
     buildqueue = Queue('buildqueue', config)
     buildqueue.connect()
     #lastbuild = {'id':None, 'time':None}
@@ -383,7 +383,7 @@ def produce_jobs(idx):
                 continue
             if res['state'] == 1:
                 # completed build now push to our redis queue
-                info = {'url': url, 'jobid': idx}
+                info = {'url': url, 'jobid': idx, 'config_path': path}
                 task = Task(info)
                 jobqueue.enqueue(task)
                 log(key, "In job queue %s" % idx, 'info')

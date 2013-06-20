@@ -16,7 +16,19 @@ class DarkDaemon(Daemon):
         """
         The daemon process
         """
-        produce_jobs(int(sys.argv[2]))
+        if len(sys.argv) >= 4:
+            if sys.argv[3].startswith('--config='):
+                config_path = sys.argv[3].split('--config=')[1]
+                if os.path.exists(config_path):
+                    produce_jobs(int(sys.argv[2]), path=config_path)
+                else:
+                    print 'Invalid Path'
+            else:
+                print 'Unknown command'
+                sys.exit(2)
+            sys.exit(0)
+        else:
+            produce_jobs(int(sys.argv[2]))
 
 
 if __name__ == '__main__':
