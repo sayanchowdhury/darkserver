@@ -3,6 +3,7 @@ import os
 import sys
 import koji
 import logging
+import optparse
 from darkimporter.darkdaemon import Daemon
 from darkimporter.libimporter import produce_jobs
 from darkimporter.libimporter import create_rundir
@@ -16,33 +17,25 @@ class DarkDaemon(Daemon):
         """
         The daemon process
         """
-        if len(sys.argv) >= 4:
-            if sys.argv[3].startswith('--config='):
-                config_path = sys.argv[3].split('--config=')[1]
-                if os.path.exists(config_path):
-                    produce_jobs(int(sys.argv[2]), path=config_path)
-                else:
-                    print 'Invalid Path'
-            else:
-                print 'Unknown command'
-                sys.exit(2)
-            sys.exit(0)
+        config = options.config
+        build_id = options.build_id
+        if os.path.exists(config_path):
+            produce_jobs(int(sys.argv[2]), path=config_path)
         else:
-            produce_jobs(int(sys.argv[2]))
+            print 'Invalid Path'
 
 
 if __name__ == '__main__':
-    daemon = None 
+    daemon = None
     create_rundir()
-    if len(sys.argv) >= 2:
-        daemon = DarkDaemon('/var/run/darkserver/darkproducer.pid')
-
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        else:
-            print "Unknown command"
-            sys.exit(2)
-        sys.exit(0)
-    else:
-        print "usage: %s start" % sys.argv[0]
-        sys.exit(2)
+    parser = optparse.OptionParser("usage: %prog [options] args [options] FILE")
+    parser.add_option("-s", "--start", dest="build_id",
+                        type="string", help="specify the build id")
+    parser.add_option("-c", "--config", dest="config",
+                        default="/etc/darkserver/config/darkserverurl-koji.conf",
+                        type="string", help="specify the config file")
+    (options, args) = parser.parse_args()
+    if options.build_id is None:
+        parser.error("Incorrect number of arguments")
+    daemon = DarkDaemon('/var/run/darkserver/darkproducer.pid')
+    daemon.start()

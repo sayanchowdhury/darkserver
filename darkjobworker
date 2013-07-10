@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import logging
+import optparse
 
 import darkimporter.utils as utils
 from darkimporter.darkdaemon import Daemon
@@ -48,26 +49,24 @@ class DarkDaemon(Daemon):
             except Exception, err:
                 log(key, str(err), 'error')
         remove_redis_keys('darkjobworker')
-                
 
 if __name__ == '__main__':
-    daemon = None 
+    daemon = None
     create_rundir()
-    if len(sys.argv) == 2:
-        daemon = DarkDaemon('/var/run/darkserver/darkjobqueue.pid')
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        else:
-            print "Unknown command"
-            sys.exit(2)
-        sys.exit(0)
-    if len(sys.argv) == 3:
-        daemon = DarkDaemon('/var/run/darkserver/darkjobqueue%s.pid' % sys.argv[2])
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        elif 'stop' == sys.argv[1]:
-            daemon.stop() 
-        sys.exit(0)
-    else:
-        print "usage: %s start" % sys.argv[0]
-        sys.exit(2)
+    parser = optparse.OptionParser("usage: %prog [options]")
+    parser.add_option("-s","--start",dest="start",
+                     action="store_true", help="start the buildqueue")
+    parser.add_option("-e","--stop",dest="stop",
+                     action="store_true", help="stop the buildqueue")
+    parser.add_option("-p","--pid",dest="pid",
+                    help="specify the pid")
+    (options,args) = parser.parse_args()
+    if options.start is None and options.stop is None:
+        parser.error("Incorrect number of arguments")
+    if options.pid is None:
+        parser.error("Argument should contain --pid option")
+    daemon = DarkDaemon('/var/run/darkserver/darkjobqueue%s.pid' % options.pid)
+    if options.stop:
+        daemon.stop()
+    elif options.start:
+        daemon.start()
