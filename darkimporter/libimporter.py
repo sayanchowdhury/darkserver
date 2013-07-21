@@ -359,7 +359,7 @@ def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
             break
         try:
             rdb.set('darkproducer-status', '1')
-            idx = int(rdb.get('darkproducer-id')
+            idx = int(rdb.get('darkproducer-id'))
             utils.msgtext = "ID: %s" % idx
             res = kc.getBuild(idx)
             url = kojiurl_base_url + '/koji/buildinfo?buildID=%s' % idx
