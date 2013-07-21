@@ -125,7 +125,7 @@ def downloadrpm(url, path):
     system("wget %s -O %s" % (url, path))
 
 
-def get_distro(idx):
+def get_distro(idx, config_path):
     """
     Guess the distro name from rpm releases
     """
@@ -134,7 +134,7 @@ def get_distro(idx):
         path = '/etc/darkserver/dark-distros.json'
 
     distro = json.load(open(path))
-    kojiurl = get_url_config()
+    kojiurl = get_url_config(config_path)
     kc = koji.ClientSession(kojiurl, {'debug': False, 'password': None,\
                         'debug_xmlrpc': False, 'user': None})
     res = kc.getBuild(idx)
@@ -335,7 +335,7 @@ def do_buildid_import(mainurl, idx, key, path):
             log_status('darkjobworker', 'Import done for %s' % rpm)
 
 
-def produce_jobs(idx, path='/etc/darkserver/darkserverurl.conf'):
+def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
     key = get_key('darkproducer')
     log(key, "starting with %s" % str(idx), 'info')
     kojiurl = get_url_config(path)
@@ -359,7 +359,7 @@ def produce_jobs(idx, path='/etc/darkserver/darkserverurl.conf'):
             break
         try:
             rdb.set('darkproducer-status', '1')
-            idx = int(rdb.get('darkproducer-id'))
+            idx = int(rdb.get('darkproducer-id')
             utils.msgtext = "ID: %s" % idx
             res = kc.getBuild(idx)
             url = kojiurl_base_url + '/koji/buildinfo?buildID=%s' % idx
