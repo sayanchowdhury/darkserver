@@ -17,10 +17,10 @@ class DarkDaemon(Daemon):
         """
         The daemon process
         """
-        config = options.config
+        config_path = options.config
         build_id = options.build_id
         if os.path.exists(config_path):
-            produce_jobs(int(sys.argv[2]), path=config_path)
+            produce_jobs(int(build_id), path=config_path)
         else:
             print 'Invalid Path'
 
