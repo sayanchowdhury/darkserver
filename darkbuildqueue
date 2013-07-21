@@ -32,6 +32,6 @@ if __name__ == '__main__':
         parser.error("Incorrect number of arguments")
     if options.pid is None:
         parser.error("Argument should contain a PID")
-    daemon = DarkDaemon('/var/run/darkserver/darkbuildqueue%s.pid' % pid)
+    daemon = DarkDaemon('/var/run/darkserver/darkbuildqueue%s.pid' % options.pid)
     daemon.start()
     sys.exit(0)
