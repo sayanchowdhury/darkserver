@@ -17,6 +17,7 @@ from .utils import log
 from retask.queue import Queue
 from retask.task import Task
 from BeautifulSoup import BeautifulSoup
+from urlparse import urlparse
 
 
 def get_key(name):
@@ -339,7 +340,8 @@ def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
     key = get_key('darkproducer')
     log(key, "starting with %s" % str(idx), 'info')
     kojiurl = get_url_config(path)
-    kojiurl_base_url = kojiurl.rsplit('/', 1)[0]
+    parsed_url = urlparse(kojiurl)
+    kojiurl_base_url = '%s://%s' % (parsed_url.scheme, parsed_url.netloc)
     kc = koji.ClientSession(kojiurl, {'debug': False, 'password': None,\
                         'debug_xmlrpc': False, 'user': None})
 
