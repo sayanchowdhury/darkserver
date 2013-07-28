@@ -196,9 +196,22 @@ def system(cmd):
     out, err = ret.communicate()
     return out
 
+def get_arch(path):
+    """
+    Get the arch from config file
+    """
+    try:
+        config = ConfigParser.ConfigParser()
+        config.read(path)
+
+        arch = config.get('darkserver','arch')
+    except Exception, e:
+        log('get_arch', str(e), 'error')
+    return arch
+
 def get_url_config(path):
     """
-    Get the URL configuration as a dict
+    Get the URL configuration from config file
     """
     url = 'http://koji.fedoraproject.org/kojihub/'
     try:
@@ -309,6 +322,7 @@ def do_buildid_import(mainurl, idx, key, path):
         return
     req = requests.get(mainurl)
     soup = BeautifulSoup(req.content)
+    from ipdb import set
     for link in soup.findAll('a'):
         name = link.get('href')
         if name.endswith('.rpm') and not name.endswith('.src.rpm'):
@@ -337,7 +351,8 @@ def do_buildid_import(mainurl, idx, key, path):
 
 
 def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
-    key = get_key('darkproducer')
+    arch = get_arch(path)
+    key = get_key('darkproducer-%s' % arch)
     log(key, "starting with %s" % str(idx), 'info')
     kojiurl = get_url_config(path)
     parsed_url = urlparse(kojiurl)
@@ -355,13 +370,13 @@ def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
     if not rdb:
         log(key, 'redis is missing', 'error')
         return None
-    rdb.set('darkproducer-id', idx)
+    rdb.set('darkproducer-id-%s' % arch, idx)
     while True:
         if check_shutdown():
             break
         try:
-            rdb.set('darkproducer-status', '1')
-            idx = int(rdb.get('darkproducer-id'))
+            rdb.set('darkproducer-status-%s' % arch, '1')
+            idx = int(rdb.get('darkproducer-id-%s' % arch))
             utils.msgtext = "ID: %s" % idx
             res = kc.getBuild(idx)
             url = kojiurl_base_url + '/koji/buildinfo?buildID=%s' % idx
@@ -389,7 +404,7 @@ def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
                 task = Task(info)
                 jobqueue.enqueue(task)
                 log(key, "In job queue %s" % idx, 'info')
-                rdb.incr('darkproducer-id')
+                rdb.incr('darkproducer-id-%s' % arch)
                 continue
 
             if res['state'] == 0:
@@ -398,16 +413,16 @@ def produce_jobs(idx, path='/etc/darkserver/config/darkserverurl-koji.conf'):
                 task = Task(info)
                 buildqueue.enqueue(task)
                 log(key, "In build queue %s" % idx, 'info')
-                rdb.incr('darkproducer-id')
+                rdb.incr('darkproducer-id-%s' % arch)
                 continue
             else:
-                rdb.incr('darkproducer-id')
+                rdb.incr('darkproducer-id-%s' % arch)
 
         except Exception, error:
             log(key, str(error), 'error', send_mail=False)
             time.sleep(120)
             continue
-    rdb.set('darkproducer-status', '0')
+    rdb.set('darkproducer-status-%s' % arch, '0')
 
 
 def monitor_buildqueue():
