@@ -36,7 +36,6 @@ class DarkDaemon(Daemon):
                 time.sleep(60)
                 continue
             try:
-                from ipdb import set_trace;set_trace()
                 task = jobqueue.dequeue()
                 if not task:
                     continue
