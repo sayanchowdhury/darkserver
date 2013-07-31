@@ -322,7 +322,6 @@ def do_buildid_import(mainurl, idx, key, path):
         return
     req = requests.get(mainurl)
     soup = BeautifulSoup(req.content)
-    from ipdb import set
     for link in soup.findAll('a'):
         name = link.get('href')
         if name.endswith('.rpm') and not name.endswith('.src.rpm'):
