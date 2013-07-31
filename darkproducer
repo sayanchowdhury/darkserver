@@ -7,6 +7,7 @@ import optparse
 from darkimporter.darkdaemon import Daemon
 from darkimporter.libimporter import produce_jobs
 from darkimporter.libimporter import create_rundir
+from darkimporter.libimporter import get_arch
 
 logging.basicConfig(filename='/var/log/darkserver.log', level=logging.INFO,\
                         format='%(asctime)s:%(name)s:%(levelname)s:%(message)s')
@@ -37,5 +38,11 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     if options.build_id is None:
         parser.error("Incorrect number of arguments")
-    daemon = DarkDaemon('/var/run/darkserver/darkproducer.pid')
+    config_path = options.config
+    if os.path.exists(config_path):
+        arch = get_arch(config_path)
+    else:
+        print 'Invalid CONFIG file.'
+        sys.exit(0)
+    daemon = DarkDaemon('/var/run/darkserver/darkproducer-%s.pid' % arch)
     daemon.start()
