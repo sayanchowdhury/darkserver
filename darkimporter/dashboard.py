@@ -68,7 +68,7 @@ class Application(Cmd):
         Shutdown various processes
 
         Example calls:
-        shutdown darkproducer
+        shutdown darkproducer <architecture>
         shutdown darkbuildqueue
         shutdown darkjobworker:8390:ip
 
@@ -81,7 +81,8 @@ class Application(Cmd):
             unique = line.split(':')[2]
             self.rdb.set('shutdown:%s:%s' % (process_id, unique), 1)
         elif line.startswith('darkproducer'):
-            process_id = self.get_process_id('darkproducer')
+            process, arch = line.split()
+            process_id = self.get_process_id('%s-%s' % (process, arch))
             if process_id:
                 self.rdb.set('shutdown:%s' % process_id, 1)
         elif line.startswith('darkbuildqueue'):
@@ -99,11 +100,12 @@ class Application(Cmd):
         """
         Print status of running processes.
         """
-        producer = self.rdb.get('darkproducer-status')
-        color = 'green' if producer == '1' else 'red'
-        status = 'running' if producer == '1' else 'stopped'
-        print(self.bold("Producer\t\t"), end='')
-        print(self.bold(self.colorize(status, color)), end='\n')
+        for arch_status in self.rdb.keys('darkproducer-status-*'):
+            producer = self.rdb.get(arch_status)
+            color = 'green' if producer == '1' else 'red'
+            status = 'running' if producer == '1' else 'stopped'
+            print(self.bold("Producer: %s \t\t" % arch_status), end='')
+            print(self.bold(self.colorize(status, color)), end='\n')
 
         # For Build worker
         builder = self.rdb.get('darkbuildqueue-status')

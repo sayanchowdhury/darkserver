@@ -25,13 +25,9 @@ if __name__ == '__main__':
     parser = optparse.OptionParser("usage: %prog [options]")
     parser.add_option("-s","--start",dest="start",
                       action="store_true",help="start the buildqueue")
-    parser.add_option("-p","--pid",dest="pid",
-                      help="specify the pid for build queue")
     (options,args) = parser.parse_args()
     if options.start is None:
         parser.error("Incorrect number of arguments")
-    if options.pid is None:
-        parser.error("Argument should contain a PID")
-    daemon = DarkDaemon('/var/run/darkserver/darkbuildqueue%s.pid' % options.pid)
+    daemon = DarkDaemon('/var/run/darkserver/darkbuildqueue.pid')
     daemon.start()
     sys.exit(0)
