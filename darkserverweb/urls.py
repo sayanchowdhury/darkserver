@@ -34,5 +34,5 @@ urlpatterns = patterns('',
     url(r'^package/(?P<name>.+)', 'buildid.views.package'),
     #url(r'^package/', 'buildid.views.index'),
     url(r'^serverversion', 'buildid.views.serverversion'),
-    
+    url(r'^dashboard/$', 'buildid.views.web_dashboard'),
 )

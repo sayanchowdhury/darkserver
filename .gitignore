@@ -1,6 +1,7 @@
 *.pyc
 *.wpr
 *.wpu
+*.swp
 darkserverweb/.coverage
 build/
 dist/

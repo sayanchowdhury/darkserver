@@ -8,6 +8,11 @@
 # the full text of the license.
 from django.http import HttpResponse, HttpResponseNotFound
 from django.http import HttpResponseServerError
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+from darkimporter.libimporter import redis_connection
+from buildid.utils import get_darkproducer_instances, get_darkjobworkers
 import json
 from dark_api import *
 
@@ -71,4 +76,25 @@ def serverversion(request):
     """
     return HttpResponse(json.dumps({'server-version':SERVER_VERSION}), mimetype='application/json')
 
+def web_dashboard(request):
+    """
+    The Web Dashboard
+    """
+    template = 'dashboard.html'
 
+    rdb = redis_connection()
+    darkproducer_instances = get_darkproducer_instances(rdb)
+    if rdb.exists('darkbuildqueue-status'):
+        darkbuildqueue_status = True if rdb.get('darkbuildqueue-status') else False
+    else:
+        darkbuildqueue_status = False
+    darkjobworkers = get_darkjobworkers(rdb)
+
+    ret_dict = {
+            'darkproducer_instances': darkproducer_instances,
+            'darkbuildqueue_status': darkbuildqueue_status,
+            'darkjobworkers': darkjobworkers,
+    }
+
+    ctx = RequestContext(request, ret_dict)
+    return render_to_response(template, ctx)
