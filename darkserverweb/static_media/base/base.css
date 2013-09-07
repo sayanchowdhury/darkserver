@@ -32,3 +32,71 @@ body {
     font-weight: bold;
     color: #F7F7F7;
 }
+
+.container {
+    margin-top: 50px;
+}
+
+.status-box {
+    background-color: white;
+    border: 1px solid #CCC;
+    border-color: green;
+}
+
+.status-box .status-header {
+    background-color: #F3F3F3;
+    border-bottom: 1px solid #CCC;
+    padding: 0 10px 0 10px;
+    font-size: 13px;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.status-body {
+    padding: 10px;
+    display: table;
+    width: 100%;
+    border-bottom: 1px solid greenYellow;
+}
+
+.status-text {
+    width: 45%;
+}
+
+.status-left {
+    border-left-width: 8px;
+    float: left;
+    clear: left;
+}
+
+.top-margin {
+    margin-top: 10px;
+}
+
+.padding {
+    padding: 0 10px 0 10px;
+}
+
+.clear {
+    clear: both;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.status-good {
+    background-image: url('../images/status-good.png');
+    height: 16px;
+    width: 16px;
+    overflow: hidden;
+}
+
+.remarks {
+    width: 40%;
+}

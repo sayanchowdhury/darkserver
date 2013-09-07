@@ -13,19 +13,19 @@
         </div>
 
         <div class="container constraint">
-            <div class="darkproducer-status status-box">
+            <div class="darkproducer-status status-box top-margin">
                 <div class="status-header">
-                    {% trans "Darkproducer" %}
+                    {% trans "Darkserver Producer" %}
                 </div>
                 {% for darkproducer_instance in darkproducer_instances %}
                     <div class="status-body">
-                        <div class="darkproducer-arch status-text float-left">
+                        <div class="darkproducer-arch status-text padding float-left">
                             {{ darkproducer_instance|dictionary:"arch" }}
                         </div>
                         {% if darkproducer_instance|dictionary:"status" %}
-                            <div class="float-right status-good"></div>
+                            <div class="float-left status-good"></div>
                         {% else %}
-                            <div class="float-right status-bad"></div>
+                            <div class="float-left status-bad"></div>
                         {% endif %}
                         <div class="float-right remarks">
                             {{ darkproducer_instance|dictionary:"remarks" }}
@@ -34,34 +34,34 @@
                     </div>
                 {% endfor %}
             </div>
-            <div class="darkproducer-status status-box">
+            <div class="darkproducer-status status-box top-margin">
                 <div class="status-header">
-                    {% trans "Darkbuildqueue" %}
+                    {% trans "Darkserver Build Queue" %}
                 </div>
                 <div class="status-body">
-                    <div class="darkproducer-arch status-text float-left">
-                        {% trans "Darkbuildqueue" %}
+                    <div class="darkproducer-arch status-text padding float-left">
+                        {% trans "Darkserver Build Queue" %}
                     </div>
                     {% if darkbuildqueue_status %}
-                        <div class="float-right status-good"></div>
+                        <div class="float-left status-good"></div>
                     {% else %}
-                        <div class="float-right status-bad"></div>
+                        <div class="float-left status-good"></div>
                     {% endif %}
                     <div class="float-right remarks"></div>
                     <div class="clear"></div>
                 </div>
             </div>
-            <div class="darkproducer-status status-box">
+            <div class="darkproducer-status status-box top-margin">
                 <div class="status-header">
-                    {% trans "Darkjobworker" %}
+                    {% trans "Darkserver Job Worker" %}
                 </div>
-                {% for darkjobworker in darkjoboworkers %}
+                {% for darkjobworker in darkjobworkers %}
                 <div class="status-body">
-                    <div class="darkproducer-arch status-text float-left">
+                    <div class="darkproducer-arch status-text padding float-left">
                         {{ darkjobworker|dictionary:"id" }}
                     </div>
-                    <div class="float-right status-good"></div>
-                    <div class="float-right large-remarks">
+                    <div class="float-left status-good"></div>
+                    <div class="float-right remarks">
                         {{ darkjobworker|dictionary:"remarks" }}
                     </div>
                     <div class="clear"></div>

@@ -19,5 +19,5 @@ def get_darkjobworkers(rdb):
         dj_status['id'] = darkjobworker_key
         dj_status['remarks'] = rdb.get(darkjobworker_key)
 
-        darkjobworkers.append(dj.status)
+        darkjobworkers.append(dj_status)
     return darkjobworkers
