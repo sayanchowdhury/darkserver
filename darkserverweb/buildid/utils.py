@@ -6,7 +6,7 @@ def get_darkproducer_instances(rdb):
         dp_status['arch'] = darkproducer_key
         dp_status['status'] = rdb.get(darkproducer_key)
         dp_status['remarks'] = rdb.get(
-                'darkproducer-id-'+ darproducer_key.split('-')[2])
+                'darkproducer-id-'+ darkproducer_key.split('-')[2])
 
         darkproducer_instances.append(dp_status)
 
