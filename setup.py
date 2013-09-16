@@ -15,7 +15,7 @@ setup(name='darkserver',
       author_email="kushaldas@gmail.com",
       url="https://github.com/kushaldas/darkserver",
       license = "http://www.gnu.org/copyleft/gpl.html",
-      packages = ['darkserverweb', 'darkserverweb.buildid', 'configs/darkimporter'],
+      packages = ['darkserverweb', 'darkserverweb.buildid', 'darkimporter'],
       data_files=[('/etc/httpd/conf.d/', ['configs/darkserver-httpd.conf']),
           ('/usr/sbin/', ['darkserver.wsgi', 'darkbuildqueue',\
                           'darkjobworker', 'darkproducer', 'darkdashboard']),
