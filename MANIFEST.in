@@ -11,3 +11,4 @@ include darkimporter/*.py
 include darkserverweb/buildid/*.py
 include static/*.*
 include static/style.css
+recursive-include darkserverweb *.html *.css *.png
