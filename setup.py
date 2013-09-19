@@ -22,7 +22,8 @@ setup(name='darkserver',
           ('/etc/darkserver/', ['darkserverweb/settings.py', 'configs/darkserverweb.conf',\
                                 'configs/dark-distros.json', 'configs/darkjobworker.conf',\
                                 'configs/redis_server.json', 'configs/email.json',\
-                                'configs/darkserverurl.conf']),
+                                'configs/darkserverurl-arm.conf','configs/darkserverurl-koji.conf',
+                                'configs/darkserverurl-ppc.conf']),
           ('/usr/share/darkserver/static', ['static/index.html', 'static/404.html', \
                                             'static/500.html']), ]
       )

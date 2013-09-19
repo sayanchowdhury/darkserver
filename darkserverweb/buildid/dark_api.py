@@ -77,7 +77,6 @@ def get_koji_download_url(pkg_name, \
                 pkg_url="http://koji.fedoraproject.org/packages"):
     """Returns download URL for packages from koji
     """
-    from ipdb import set_trace;set_trace()
     if not pkg_name.endswith('.rpm'):
         pkg_name = pkg_name + '.rpm'
     rdb = redis_connection()
